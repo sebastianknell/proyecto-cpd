@@ -1,7 +1,7 @@
 #include "tsp.h"
 
 int main() {
-    Graph graph = {
+    Graph cities = {
         {0.0,  4.4,  7.1,  10.5, 3.8,  13.4, 13.7, 3.3,  6.8,  7.1},  // Distancias de LIMA CENTRO a todos los demas
         {4.4,  0.0,  3.2,  6.9,  7.4,  16.8, 14.3, 2.8,  4.6,  5.8},  // Distancias de LINCE a todos los demas
         {7.1,  3.2,  0.0,  3.9,  10.7, 20.0, 13.5, 5.4,  5.7,  5.2},  // Distancias de MIRAFLORES a todos los demas
@@ -14,8 +14,12 @@ int main() {
         {7.1,  5.8,  5.2,  7.4,  10.3, 20.2, 8.8,  4.3,  9.2,  0.0}   // Distancias de SAN BORJA a todos los demas
     };
 
-    auto path = SequentialBAB(graph, 0);
+//    auto path = SequentialBAB(cities, 0);
+//    if (path) printPath(path);
+    auto path = ParallelBAB(cities, 0);
     if (path) printPath(path);
+
+
 
     return 0;
 }

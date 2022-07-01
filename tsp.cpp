@@ -48,9 +48,9 @@ pair<Graph, double> reduce(const Graph &graph, int from, int to) {
 }
 
 
-Path* SequentialBAB(Graph &distance, int first) {
-    for (int i = 0; i < distance.size(); i++) distance[i][i] = INT_MAX;
-    auto reduction = initialReduce(distance);
+Path* SequentialBAB(Graph &cities, int first) {
+    for (int i = 0; i < cities.size(); i++) cities[i][i] = INT_MAX;
+    auto reduction = initialReduce(cities);
     auto graph = reduction.first;
     auto cost = reduction.second;
 
@@ -103,5 +103,65 @@ Path* SequentialBAB(Graph &distance, int first) {
             }
         }
     }
+    return optimalPath;
+}
+
+Path* ParallelBAB(Graph &cities, int first) {
+    for (int i = 0; i < cities.size(); i++) cities[i][i] = INT_MAX;
+    auto reduction = initialReduce(cities);
+    auto graph = reduction.first;
+    auto cost = reduction.second;
+
+    auto cmp = [](Path* a, Path* b) {
+        return a->cost < b->cost;
+    };
+    priority_queue<Path*, vector<Path*>, decltype(cmp)> queue(cmp);
+
+    double upperBound = INT_MAX;
+    Path* currentPath = new Path();
+    currentPath->graph = graph;
+    currentPath->cost = cost;
+    currentPath->nodes.push_back(first);
+    currentPath->currentDistrito = first;
+    queue.push(currentPath);
+
+    Path* optimalPath = nullptr;
+
+    while (!queue.empty()) {
+        currentPath = queue.top();
+        queue.pop();
+        if(currentPath->cost <= upperBound){
+            bool stopCondition = false;
+            vector<int> nextDistrito = {};
+            // paralelo
+            for (int i = 0; i < graph.size(); i++) {
+                if (currentPath->graph[currentPath->currentDistrito][i] != INT_MAX && count(currentPath->nodes.begin(),currentPath->nodes.end(), i ) == 0){
+                    stopCondition = true;
+                    nextDistrito.push_back(i);
+                }
+            }
+            // barrier (?)
+            if(!stopCondition){
+                upperBound = currentPath->cost;
+                if(optimalPath == nullptr || currentPath->cost < optimalPath->cost) optimalPath = currentPath;
+            }
+            else {
+                // paralelo
+                #pragma omp parallel for default(none) shared(nextDistrito, currentPath ,queue)
+                for (int i = 0; i < nextDistrito.size(); i++) {
+                    Path* nextPath = new Path();
+                    auto newReduction = reduce(currentPath->graph, currentPath->currentDistrito, nextDistrito[i]);
+                    nextPath->graph = newReduction.first;
+                    nextPath->nodes = currentPath->nodes;
+                    nextPath->nodes.push_back(nextDistrito[i]);
+                    nextPath->cost = newReduction.second + currentPath->cost + currentPath->graph[currentPath->currentDistrito][nextDistrito[i]];
+                    nextPath->currentDistrito = nextDistrito[i];
+                    queue.push(nextPath);
+                }
+                // barrier (?)
+            }
+        }
+    }
+//    printPath(optimalPath);
     return optimalPath;
 }

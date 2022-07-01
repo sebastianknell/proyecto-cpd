@@ -11,6 +11,7 @@
 #include <queue>
 #include <climits>
 #include <algorithm>
+#include <omp.h>
 
 using namespace std;
 
@@ -21,8 +22,7 @@ void printPath(Path*);
 pair<Graph, double> reduce(const Graph&, int from, int to);
 pair<Graph, double> initialReduce(const Graph&);
 Path* SequentialBAB(Graph&, int);
-
-Path ParallelBAB();
+Path* ParallelBAB(Graph&, int);
 
 
 #endif //TSP_TSP_H
