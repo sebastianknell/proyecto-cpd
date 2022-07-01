@@ -14,7 +14,7 @@
 using namespace std;
 
 using Graph = vector<vector<double>>;
-using Path = struct {stack<int> nodes; double cost;};
+using Path = struct {Graph graph; vector<int> nodes; double cost; int currentDistrito;};
 
 pair<Graph, double> reduce(const Graph&, int from, int to);
 pair<Graph, double> initialReduce(const Graph&);
