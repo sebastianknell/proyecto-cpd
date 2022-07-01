@@ -3,4 +3,4 @@ project(tsp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(tsp main.cpp tsp.h tsp.cpp)
+add_executable(tsp main.cpp tsp.cpp tsp.h)

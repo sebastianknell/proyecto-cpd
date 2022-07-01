@@ -1,4 +1,3 @@
-#include <iostream>
 #include "tsp.h"
 
 int main() {
@@ -15,6 +14,8 @@ int main() {
         {7.1,  5.8,  5.2,  7.4,  10.3, 20.2, 8.8,  4.3,  9.2,  0.0}   // Distancias de SAN BORJA a todos los demas
     };
 
+    auto path = SequentialBAB(graph, 0);
+    if (path) printPath(path);
 
     return 0;
 }

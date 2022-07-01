@@ -4,6 +4,11 @@
 
 #include "tsp.h"
 
+void printPath(Path *path) {
+    for (auto &n : path->nodes) cout << n << "->";
+    cout << endl;
+}
+
 pair<Graph, double> initialReduce(const Graph &graph) {
     Graph copy = graph;
     double cost = 0;
@@ -17,7 +22,7 @@ pair<Graph, double> initialReduce(const Graph &graph) {
         }
     }
     for(int i = 0; i<graph.size(); i++){
-        double min = DBL_MAX;
+        double min = INT_MAX;
         for(int j = 0; j<graph.size();j++){
             if(copy[j][i] < min){
                 min = copy[j][i];
@@ -25,7 +30,7 @@ pair<Graph, double> initialReduce(const Graph &graph) {
         }
         cost += min;
         for(int j = 0; j<graph.size();j++){
-            if(copy[j][i] != DBL_MAX){
+            if(copy[j][i] != INT_MAX){
                 copy[j][i] -= min;
             }
         }
@@ -35,63 +40,68 @@ pair<Graph, double> initialReduce(const Graph &graph) {
 
 pair<Graph, double> reduce(const Graph &graph, int from, int to) {
     auto reducedGraph = graph;
-    for (int i = 0; i < graph.size(); i++) reducedGraph[from][i] = BDL_MAX;
-    for (int i = 0; i < graph.size(); i++) reducedGraph[i][to] = DBL_MAX;
-    reducedGraph[to][0] = DBL_MAX;
+    // ambos paralelos
+    for (int i = 0; i < graph.size(); i++) reducedGraph[from][i] = INT_MAX;
+    for (int i = 0; i < graph.size(); i++) reducedGraph[i][to] = INT_MAX;
+    reducedGraph[to][0] = INT_MAX;
     return initialReduce(reducedGraph);
 }
 
 
-Path SecuentialBAB(const Graph &distance, int first) {
+Path* SequentialBAB(Graph &distance, int first) {
+    for (int i = 0; i < distance.size(); i++) distance[i][i] = INT_MAX;
     auto reduction = initialReduce(distance);
     auto graph = reduction.first;
     auto cost = reduction.second;
 
-    auto cmp = [](Path &a, Path &b) {
-        return a.cost < b.cost;
+    auto cmp = [](Path* a, Path* b) {
+        return a->cost < b->cost;
     };
+    priority_queue<Path*, vector<Path*>, decltype(cmp)> queue(cmp);
 
-    double UpperBound = DBL_MAX;
-
-    priority_queue<Path, vector<Path>, decltype(cmp)> queue(cmp);
+    double upperBound = INT_MAX;
     Path* currentPath = new Path();
     currentPath->graph = graph;
-    currentPath->nodes.push(first);
     currentPath->cost = cost;
-    queue.push(*currentPath);
+    currentPath->nodes.push_back(first);
+    currentPath->currentDistrito = first;
+    queue.push(currentPath);
 
     Path* optimalPath = nullptr;
 
     while (!queue.empty()) {
-        auto CurrentPath = queue.top();
+        currentPath = queue.top();
         queue.pop();
-        if(currentPath.cost <= UpperBound){
-            bool StopCondition = false;
+        if(currentPath->cost <= upperBound){
+            bool stopCondition = false;
             vector<int> nextDistrito = {};
-            for(int i = 0; i< graph.size(); i++){
-                if(currentPath.graph[currentPath.currentDistrito][i] != DBL_MAX && currentPath.){
-                    StopCondition = true;
+            // paralelo
+            for (int i = 0; i < graph.size(); i++) {
+                if (currentPath->graph[currentPath->currentDistrito][i] != INT_MAX && count(currentPath->nodes.begin(),currentPath->nodes.end(), i ) == 0){
+                    stopCondition = true;
                     nextDistrito.push_back(i);
                 }
             }
-            if(!StopCondition){
-                UpperBound = currentPath.cost;
-                if(optimalPath == nullptr) optimalPath = &currentPath;
-                else if(currentPath.cost<optimalPath.cost) optimalPath = &currentPath;
-            } else{
-                for(int i = 0; i<nextDistrito.size(); i++){
+            // barrier (?)
+            if(!stopCondition){
+                upperBound = currentPath->cost;
+                if(optimalPath == nullptr || currentPath->cost < optimalPath->cost) optimalPath = currentPath;
+            }
+            else {
+                // paralelo
+                for (int i = 0; i < nextDistrito.size(); i++) {
                     Path* nextPath = new Path();
-                    reduction = reduction();
+                    reduction = reduce(currentPath->graph, currentPath->currentDistrito, nextDistrito[i]);
                     nextPath->graph = reduction.first;
-                    nextPath->nodes = currentPath.nodes;
-                    nextPath->nodes.push(i);
-                    nextPath->cost = reduction.second;
-                    queue.push(*nextPath);
+                    nextPath->nodes = currentPath->nodes;
+                    nextPath->nodes.push_back(nextDistrito[i]);
+                    nextPath->cost = reduction.second + currentPath->cost + currentPath->graph[currentPath->currentDistrito][nextDistrito[i]]; // fix
+                    nextPath->currentDistrito = nextDistrito[i];
+                    queue.push(nextPath);
                 }
+                // barrier (?)
             }
         }
-
     }
-
-    return Path();
+    return optimalPath;
 }
