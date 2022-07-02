@@ -19,6 +19,7 @@ using Graph = vector<vector<double>>;
 using Path = struct {Graph graph; vector<int> nodes; double cost; int currentDistrito;};
 
 void printPath(Path*);
+void printPath(Path*, vector<string>&);
 pair<Graph, double> reduce(const Graph&, int from, int to);
 pair<Graph, double> initialReduce(const Graph&);
 Path* SequentialBAB(Graph&, int);

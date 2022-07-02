@@ -9,6 +9,18 @@ void printPath(Path *path) {
     cout << endl;
 }
 
+void printPath(Path* path, vector<string> &names) {
+    string line(30, '-');
+    cout << line << endl;
+    cout << "El camino optimo es:" << endl;
+    for (int i = 0; i < path->nodes.size()-1; i++) {
+        cout << names[i] << " -> " << names[i+1] << endl;
+    }
+    cout << names[path->nodes.size()-1] << " -> " << names[0] << endl;
+    cout << "Distancia total: " << path->cost << endl;
+    cout << line << endl;
+}
+
 pair<Graph, double> initialReduce(const Graph &graph) {
     Graph copy = graph;
     double cost = 0;

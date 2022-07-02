@@ -13,6 +13,7 @@ int main() {
         {6.8,  4.6,  5.7,  8.7,  9.6,  16.5, 17.9, 6.8,  0.0,  9.2},  // Distancias de MAGDALENA DEL MAR a todos los demas
         {7.1,  5.8,  5.2,  7.4,  10.3, 20.2, 8.8,  4.3,  9.2,  0.0}   // Distancias de SAN BORJA a todos los demas
     };
+    vector<string> names = {"Lima Centro", "Lince", "Miraflores", "Barranco", "Rimac", "Los Olivos", "La Molina", "La Victoria", "Magdalena del Mar", "San Borja"};
 
     omp_set_num_threads(4);
     double t1, t2;
@@ -20,9 +21,10 @@ int main() {
     t1 = omp_get_wtime();
     auto path1 = SequentialBAB(cities, 0);
     t2 = omp_get_wtime();
-    if (path1) printPath(path1);
-    cout << "Total time: " << t2-t1 << endl;
+    if (path1) printPath(path1, names);
+    cout << "Running time: " << t2-t1 << endl;
     cout << endl;
+
     cout << "PARALLEL" << endl;
     t1 = omp_get_wtime();
     auto path2 = ParallelBAB(cities, 0);
