@@ -24,24 +24,34 @@ void printPath(Path* path, vector<string> &names) {
 pair<Graph, double> initialReduce(const Graph &graph) {
     Graph copy = graph;
     double cost = 0;
-    for(int i = 0; i<graph.size(); i++){
+    // paralelo
+    #pragma omp parallel for default(none) shared(graph, cost, copy)
+    for (int i = 0; i < graph.size(); i++) {
         double min = *min_element(graph[i].begin(), graph[i].end());
-        cost += min;
-        for(int j = 0; j<graph.size();j++){
-            if(copy[j][i] != DBL_MAX){
-                copy[j][i] -= min;
+        if(min != INT_MAX) {
+            #pragma omp atomic update
+            cost += min;
+        }
+        for (int j = 0; j < graph.size(); j++) {
+            if(copy[i][j] != INT_MAX){
+                copy[i][j] -= min;
             }
         }
     }
-    for(int i = 0; i<graph.size(); i++){
+    // paralelo
+    #pragma omp parallel for default(none) shared(graph, cost, copy)
+    for (int i = 0; i < graph.size(); i++) {
         double min = INT_MAX;
         for (int j = 0; j < graph.size(); j++) {
             if(copy[j][i] < min){
                 min = copy[j][i];
             }
         }
-        cost += min;
-        for(int j = 0; j<graph.size();j++){
+        if (min != INT_MAX) {
+            #pragma omp atomic update
+            cost += min;
+        }
+        for (int j = 0; j < graph.size(); j++) {
             if(copy[j][i] != INT_MAX){
                 copy[j][i] -= min;
             }

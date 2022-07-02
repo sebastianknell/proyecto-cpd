@@ -23,7 +23,7 @@ class Tester {
         vector<double> times;
         auto testGraph = generateGraph(n);
         for (auto t : threads) {
-            if (t >= maxThreads) break;
+            if (t > maxThreads) break;
             int iterations = 10;
             double avg = 0;
             omp_set_num_threads(t);
