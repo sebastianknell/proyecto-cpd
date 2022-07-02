@@ -15,8 +15,8 @@
 
 using namespace std;
 
-using Graph = vector<vector<double>>;
-using Path = struct {Graph graph; vector<int> nodes; double cost; int currentDistrito;};
+typedef vector<vector<double>> Graph;
+typedef struct{Graph graph; vector<int> nodes; double cost; int currentDistrito;} Path;
 
 void printPath(Path*);
 void printPath(Path*, vector<string>&);
