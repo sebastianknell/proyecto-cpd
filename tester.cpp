@@ -18,13 +18,14 @@ class Tester {
         return graph;
     }
 
+public:
     static void testParallel(int n, int maxThreads) {
+        int iterations = 10;
         vector<int> threads = {2, 4, 6, 8, 10, 12};
         vector<double> times;
         auto testGraph = generateGraph(n);
         for (auto t : threads) {
             if (t > maxThreads) break;
-            int iterations = 10;
             double avg = 0;
             omp_set_num_threads(t);
             for (int i = 0; i < iterations; i++) {

@@ -1,4 +1,5 @@
 #include "tsp.h"
+#include "tester.cpp"
 
 int main() {
     Graph cities = {
@@ -15,22 +16,24 @@ int main() {
     };
     vector<string> names = {"Lima Centro", "Lince", "Miraflores", "Barranco", "Rimac", "Los Olivos", "La Molina", "La Victoria", "Magdalena del Mar", "San Borja"};
 
-    omp_set_num_threads(4);
-    double t1, t2;
-    cout << "SEQUENTIAL" << endl;
-    t1 = omp_get_wtime();
-    auto path1 = SequentialBAB(cities, 0);
-    t2 = omp_get_wtime();
-    if (path1) printPath(path1, names);
-    cout << "Running time: " << t2-t1 << endl;
-    cout << endl;
+//    omp_set_num_threads(4);
+//    double t1, t2;
+//    cout << "SEQUENTIAL" << endl;
+//    t1 = omp_get_wtime();
+//    auto path1 = SequentialBAB(cities, 0);
+//    t2 = omp_get_wtime();
+//    if (path1) printPath(path1, names);
+//    cout << "Running time: " << t2-t1 << endl;
+//    cout << endl;
+//
+//    cout << "PARALLEL" << endl;
+//    t1 = omp_get_wtime();
+//    auto path2 = ParallelBAB(cities, 0);
+//    t2 = omp_get_wtime();
+//    if (path2) printPath(path2);
+//    cout << "Total time: " << t2-t1 << endl;
 
-    cout << "PARALLEL" << endl;
-    t1 = omp_get_wtime();
-    auto path2 = ParallelBAB(cities, 0);
-    t2 = omp_get_wtime();
-    if (path2) printPath(path2);
-    cout << "Total time: " << t2-t1 << endl;
+    Tester::testParallel(10, 4);
 
     return 0;
 }
