@@ -23,11 +23,13 @@ public:
         int iterations = 10;
         vector<int> threads = {2, 4, 6, 8, 10, 12};
         vector<double> times;
+        cout << "Creando grafo de prueba" << endl;
         auto testGraph = generateGraph(n);
         for (auto t : threads) {
             if (t > maxThreads) break;
             double avg = 0;
             omp_set_num_threads(t);
+            cout << "Prueba con " << t << " threads" << endl;
             for (int i = 0; i < iterations; i++) {
                 auto t1 = omp_get_wtime();
                 ParallelBAB(*testGraph, 0);

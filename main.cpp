@@ -33,7 +33,7 @@ int main() {
 //    if (path2) printPath(path2);
 //    cout << "Total time: " << t2-t1 << endl;
 
-    Tester::testParallel(10, 4);
+    Tester::testParallel(15, 8);
 
     return 0;
 }
