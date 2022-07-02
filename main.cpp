@@ -14,12 +14,21 @@ int main() {
         {7.1,  5.8,  5.2,  7.4,  10.3, 20.2, 8.8,  4.3,  9.2,  0.0}   // Distancias de SAN BORJA a todos los demas
     };
 
-//    auto path = SequentialBAB(cities, 0);
-//    if (path) printPath(path);
-    auto path = ParallelBAB(cities, 0);
-    if (path) printPath(path);
-
-
+    omp_set_num_threads(4);
+    double t1, t2;
+    cout << "SEQUENTIAL" << endl;
+    t1 = omp_get_wtime();
+    auto path1 = SequentialBAB(cities, 0);
+    t2 = omp_get_wtime();
+    if (path1) printPath(path1);
+    cout << "Total time: " << t2-t1 << endl;
+    cout << endl;
+    cout << "PARALLEL" << endl;
+    t1 = omp_get_wtime();
+    auto path2 = ParallelBAB(cities, 0);
+    t2 = omp_get_wtime();
+    if (path2) printPath(path2);
+    cout << "Total time: " << t2-t1 << endl;
 
     return 0;
 }
