@@ -33,8 +33,9 @@ int main() {
 //    t2 = omp_get_wtime();
 //    if (path2) printPath(path2);
 //    cout << "Total time: " << t2-t1 << endl;
-    Tester::testSequential(30, 1);
-    Tester::testParallel(30, 10, 1);
+    auto testGraph = Tester::generateGraph(30);
+    Tester::testSequential(testGraph, 10);
+    Tester::testParallel(testGraph, 10, 10);
 
     return 0;
 }

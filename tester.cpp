@@ -5,6 +5,7 @@
 #include "tsp.h"
 
 class Tester {
+public:
     static Graph* generateGraph(int n) {
         auto graph = new Graph(n, vector<double>(n));
         random_device dev;
@@ -18,9 +19,7 @@ class Tester {
         return graph;
     }
 
-public:
-    static void testSequential(int n, int iterations) {
-        auto testGraph = generateGraph(n);
+    static void testSequential(Graph* testGraph, int iterations) {
         double avg = 0;
         for (int i = 0; i < iterations; i++) {
             auto t1 = omp_get_wtime();
@@ -31,10 +30,9 @@ public:
         cout << "Tiempo secuencial: " << avg/iterations << endl;
     }
 
-    static void testParallel(int n, int maxThreads, int iterations) {
+    static void testParallel(Graph* testGraph, int maxThreads, int iterations) {
         vector<int> threads = {2, 4, 6, 8, 10, 12};
         vector<double> times;
-        auto testGraph = generateGraph(n);
         for (auto t : threads) {
             if (t > maxThreads) break;
             double avg = 0;
