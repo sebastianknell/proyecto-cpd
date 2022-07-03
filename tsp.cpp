@@ -172,7 +172,7 @@ Path* ParallelBAB(Graph &cities, int first) {
     auto cost = reduction.second;
 
     auto cmp = [](Path* a, Path* b) {
-        return a->cost < b->cost;
+        return a->cost > b->cost;
     };
     priority_queue<Path*, vector<Path*>, decltype(cmp)> queue(cmp);
 
@@ -189,7 +189,7 @@ Path* ParallelBAB(Graph &cities, int first) {
     while (!queue.empty()) {
         currentPath = queue.top();
         queue.pop();
-        if(currentPath->cost <= upperBound){
+        if (currentPath->cost <= upperBound) {
             bool stopCondition = false;
             vector<int> nextDistrito = {};
             for (int i = 0; i < graph.size(); i++) {
@@ -217,6 +217,7 @@ Path* ParallelBAB(Graph &cities, int first) {
                 }
             }
         }
+        else break;
     }
     return optimalPath;
 }
