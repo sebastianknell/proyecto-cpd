@@ -17,7 +17,7 @@ void printPath(Path* path, vector<string> &names) {
     for (int i = 0; i < path->nodes.size()-1; i++) {
         cout << names[path->nodes[i]] << " -> " << names[path->nodes[i+1]] << endl;
     }
-    cout << names[path->nodes.size()-1] << " -> " << names[0] << endl;
+    cout << names[path->nodes[path->nodes.size()-1]] << " -> " << names[0] << endl;
     cout << "Distancia total: " << path->cost << endl;
     cout << line << endl;
 }
