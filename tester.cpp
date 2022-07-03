@@ -47,7 +47,7 @@ public:
             avg /= iterations;
             times.push_back(avg);
         }
-        cout << "Resultados para n = "<< n << endl;
+        cout << "Resultados para n = "<< testGraph->size() << endl;
         for (int i = 0; i < times.size(); i++) {
             cout << "# de threads = " << threads[i] << " | " << "tiempo = " << times[i] << endl;
         }
