@@ -19,11 +19,23 @@ class Tester {
     }
 
 public:
+    static void testSequential(int n) {
+        auto testGraph = generateGraph(n);
+        int iterations = 10;
+        double avg = 0;
+        for (int i = 0; i < iterations; i++) {
+            auto t1 = omp_get_wtime();
+            SequentialBAB(*testGraph, 0);
+            auto t2 = omp_get_wtime();
+            avg += t2-t1;
+        }
+        cout << "Tiempo secuencial: " << avg/iterations << endl;
+    }
+
     static void testParallel(int n, int maxThreads) {
         int iterations = 10;
         vector<int> threads = {2, 4, 6, 8, 10, 12};
         vector<double> times;
-        cout << "Creando grafo de prueba" << endl;
         auto testGraph = generateGraph(n);
         for (auto t : threads) {
             if (t > maxThreads) break;
