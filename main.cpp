@@ -22,6 +22,7 @@ int main() {
 //    t1 = omp_get_wtime();
 //    auto path1 = SequentialBAB(cities, 0);
 //    t2 = omp_get_wtime();
+//    if (path1) printPath(path1);
 //    if (path1) printPath(path1, names);
 //    cout << "Running time: " << t2-t1 << endl;
 //    cout << endl;
@@ -32,8 +33,8 @@ int main() {
 //    t2 = omp_get_wtime();
 //    if (path2) printPath(path2);
 //    cout << "Total time: " << t2-t1 << endl;
-    Tester::testSequential(20);
-    Tester::testParallel(20, 10);
+    Tester::testSequential(31, 1);
+    Tester::testParallel(31, 10, 1);
 
     return 0;
 }

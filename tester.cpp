@@ -19,9 +19,8 @@ class Tester {
     }
 
 public:
-    static void testSequential(int n) {
+    static void testSequential(int n, int iterations) {
         auto testGraph = generateGraph(n);
-        int iterations = 10;
         double avg = 0;
         for (int i = 0; i < iterations; i++) {
             auto t1 = omp_get_wtime();
@@ -32,8 +31,7 @@ public:
         cout << "Tiempo secuencial: " << avg/iterations << endl;
     }
 
-    static void testParallel(int n, int maxThreads) {
-        int iterations = 10;
+    static void testParallel(int n, int maxThreads, int iterations) {
         vector<int> threads = {2, 4, 6, 8, 10, 12};
         vector<double> times;
         auto testGraph = generateGraph(n);

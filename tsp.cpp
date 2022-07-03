@@ -6,6 +6,7 @@
 
 void printPath(Path *path) {
     for (auto &n : path->nodes) cout << n << "->";
+    cout << path->nodes.front();
     cout << endl;
 }
 
@@ -14,7 +15,7 @@ void printPath(Path* path, vector<string> &names) {
     cout << line << endl;
     cout << "El camino optimo es:" << endl;
     for (int i = 0; i < path->nodes.size()-1; i++) {
-        cout << names[i] << " -> " << names[i+1] << endl;
+        cout << names[path->nodes[i]] << " -> " << names[path->nodes[i+1]] << endl;
     }
     cout << names[path->nodes.size()-1] << " -> " << names[0] << endl;
     cout << "Distancia total: " << path->cost << endl;
@@ -24,7 +25,39 @@ void printPath(Path* path, vector<string> &names) {
 pair<Graph, double> initialReduce(const Graph &graph) {
     Graph copy = graph;
     double cost = 0;
-    // paralelo
+    for (int i = 0; i < graph.size(); i++) {
+        double min = *min_element(graph[i].begin(), graph[i].end());
+        if(min != INT_MAX) {
+            cost += min;
+        }
+        for (int j = 0; j < graph.size(); j++) {
+            if(copy[i][j] != INT_MAX){
+                copy[i][j] -= min;
+            }
+        }
+    }
+    for (int i = 0; i < graph.size(); i++) {
+        double min = INT_MAX;
+        for (int j = 0; j < graph.size(); j++) {
+            if(copy[j][i] < min){
+                min = copy[j][i];
+            }
+        }
+        if (min != INT_MAX) {
+            cost += min;
+        }
+        for (int j = 0; j < graph.size(); j++) {
+            if(copy[j][i] != INT_MAX){
+                copy[j][i] -= min;
+            }
+        }
+    }
+    return {copy, cost};
+}
+
+pair<Graph, double> initialReduceParallel(const Graph &graph) {
+    Graph copy = graph;
+    double cost = 0;
     #pragma omp parallel for default(none) shared(graph, cost, copy)
     for (int i = 0; i < graph.size(); i++) {
         double min = *min_element(graph[i].begin(), graph[i].end());
@@ -38,7 +71,6 @@ pair<Graph, double> initialReduce(const Graph &graph) {
             }
         }
     }
-    // paralelo
     #pragma omp parallel for default(none) shared(graph, cost, copy)
     for (int i = 0; i < graph.size(); i++) {
         double min = INT_MAX;
@@ -69,6 +101,14 @@ pair<Graph, double> reduce(const Graph &graph, int from, int to) {
     return initialReduce(reducedGraph);
 }
 
+pair<Graph, double> reduceParallel(const Graph &graph, int from, int to) {
+    auto reducedGraph = graph;
+    // ambos paralelos
+    for (int i = 0; i < graph.size(); i++) reducedGraph[from][i] = INT_MAX;
+    for (int i = 0; i < graph.size(); i++) reducedGraph[i][to] = INT_MAX;
+    reducedGraph[to][0] = INT_MAX;
+    return initialReduceParallel(reducedGraph);
+}
 
 Path* SequentialBAB(Graph &cities, int first) {
     for (int i = 0; i < cities.size(); i++) cities[i][i] = INT_MAX;
@@ -77,7 +117,7 @@ Path* SequentialBAB(Graph &cities, int first) {
     auto cost = reduction.second;
 
     auto cmp = [](Path* a, Path* b) {
-        return a->cost < b->cost;
+        return a->cost > b->cost;
     };
     priority_queue<Path*, vector<Path*>, decltype(cmp)> queue(cmp);
 
@@ -94,7 +134,7 @@ Path* SequentialBAB(Graph &cities, int first) {
     while (!queue.empty()) {
         currentPath = queue.top();
         queue.pop();
-        if(currentPath->cost <= upperBound){
+        if (currentPath->cost <= upperBound) {
             bool stopCondition = false;
             vector<int> nextDistrito = {};
             for (int i = 0; i < graph.size(); i++) {
@@ -103,7 +143,7 @@ Path* SequentialBAB(Graph &cities, int first) {
                     nextDistrito.push_back(i);
                 }
             }
-            if(!stopCondition){
+            if (!stopCondition) {
                 upperBound = currentPath->cost;
                 if(optimalPath == nullptr || currentPath->cost < optimalPath->cost) optimalPath = currentPath;
             }
@@ -120,13 +160,14 @@ Path* SequentialBAB(Graph &cities, int first) {
                 }
             }
         }
+        else break;
     }
     return optimalPath;
 }
 
 Path* ParallelBAB(Graph &cities, int first) {
     for (int i = 0; i < cities.size(); i++) cities[i][i] = INT_MAX;
-    auto reduction = initialReduce(cities);
+    auto reduction = initialReduceParallel(cities);
     auto graph = reduction.first;
     auto cost = reduction.second;
 
@@ -165,7 +206,7 @@ Path* ParallelBAB(Graph &cities, int first) {
                 #pragma omp parallel for default(none) shared(nextDistrito, currentPath ,queue)
                 for (int i = 0; i < nextDistrito.size(); i++) {
                     Path* nextPath = new Path();
-                    auto newReduction = reduce(currentPath->graph, currentPath->currentDistrito, nextDistrito[i]);
+                    auto newReduction = reduceParallel(currentPath->graph, currentPath->currentDistrito, nextDistrito[i]);
                     nextPath->graph = newReduction.first;
                     nextPath->nodes = currentPath->nodes;
                     nextPath->nodes.push_back(nextDistrito[i]);
