@@ -16,28 +16,14 @@ int main() {
     };
     vector<string> names = {"Lima Centro", "Lince", "Miraflores", "Barranco", "Rimac", "Los Olivos", "La Molina", "La Victoria", "Magdalena del Mar", "San Borja"};
 
-//    omp_set_num_threads(4);
-//    double t1, t2;
-//    cout << "SEQUENTIAL" << endl;
-//    t1 = omp_get_wtime();
-//    auto path1 = SequentialBAB(cities, 0);
-//    t2 = omp_get_wtime();
-//    if (path1) printPath(path1);
-//    if (path1) printPath(path1, names);
-//    cout << "Running time: " << t2-t1 << endl;
-//    cout << endl;
-//
-//    cout << "PARALLEL" << endl;
-//    t1 = omp_get_wtime();
-//    auto path2 = ParallelBAB(cities, 0);
-//    t2 = omp_get_wtime();
-//    if (path2) printPath(path2);
-//    if (path2) printPath(path2, names);
-//    cout << "Total time: " << t2-t1 << endl;
-//    auto testGraph = Tester::generateGraph(30);
-//    Tester::testSequential(testGraph, 10);
-//    Tester::testParallel(testGraph, 10, 10);
-    Tester::testWeakScaling(16, 5);
+    double t1, t2;
+    omp_set_num_threads(2);
+    t1 = omp_get_wtime();
+    auto path2 = ParallelBAB(cities, 0);
+    t2 = omp_get_wtime();
+    if (path2) printPath(path2);
+    if (path2) printPath(path2, names);
+    cout << "Total time: " << t2-t1 << endl;
 
     return 0;
 }
