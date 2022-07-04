@@ -59,6 +59,7 @@ public:
         int n = 10;
         auto testGraph = generateGraph(n);
         testSequential(testGraph, iterations);
+        cout<<"======\n";
         n += 2;
         for (auto t : threads) {
             if (t > maxThreads) break;
@@ -80,5 +81,12 @@ public:
         for (int i = 0; i < times.size(); i++) {
             cout << "# de threads = " << threads[i] << " | " << "tiempo = " << times[i] << endl;
         }
+    }
+
+    static void testStrongScaling(int n, int maxThreads, int iterations) {
+        auto testGraph = generateGraph(n);
+        testSequential(testGraph,iterations);
+        cout<<"======\n";
+        testParallel(testGraph, maxThreads, iterations);
     }
 };
