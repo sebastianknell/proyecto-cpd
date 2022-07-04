@@ -53,10 +53,9 @@ public:
         }
     }
 
-    static void testWeakScaling(int maxThreads, int iterations) {
+    static void testWeakScaling(int n, int maxThreads, int iterations) {
         vector<int> threads = {2, 4, 6, 8, 10, 12, 14, 16};
         vector<double> times;
-        int n = 10;
         auto testGraph = generateGraph(n);
         testSequential(testGraph, iterations);
         n += 2;
@@ -80,5 +79,12 @@ public:
         for (int i = 0; i < times.size(); i++) {
             cout << "# de threads = " << threads[i] << " | " << "tiempo = " << times[i] << endl;
         }
+    }
+
+    static void testStrongScaling(int n, int maxThreads, int iterations) {
+        auto testGraph = generateGraph(n);
+        testSequential(testGraph,iterations);
+        cout<<"======\n";
+        testParallel(testGraph, maxThreads, iterations);
     }
 };

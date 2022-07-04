@@ -25,5 +25,11 @@ int main() {
     if (path2) printPath(path2, names);
     cout << "Total time: " << t2-t1 << endl;
 
+    // Tester t;
+    // int n = 15;
+    // int maxThreads = 8;
+    // int iterations = 10;
+    // t.testWeakScaling(n,maxThreads,iterations);
+
     return 0;
 }
