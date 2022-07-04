@@ -30,37 +30,31 @@ int main() {
 
     vector<string> names = {"Lima Centro", "Lince", "Miraflores", "Barranco", "Rimac", "Los Olivos", "La Molina", "La Victoria", "Magdalena del Mar", "San Borja"};
 
-    /*double t1, t2;
-    omp_set_num_threads(2);
-    t1 = omp_get_wtime();
-    auto path2 = ParallelBAB(cities, 0);
-    t2 = omp_get_wtime();
-    if (path2) printPath(path2);
-    if (path2) printPath(path2, names);
-    cout << "Total time: " << t2-t1 << endl;*/
-
     int n;
     int x;
+    omp_set_num_threads(2);
     vector<int> finalCities = {};
-    cout<<"Ingrese el numero de ciudades que desee considerar:\n";
+    cout<<"Ingrese el numero de ciudades que desee considerar: ";
     cin>>n;
     if(n>10 || n<1){cout<<"Numero invalido\n"; return 0;}
     cout<<"\nIngrese las ciudades que desee considerar:\n\n";
     for(int i = 0; i<names.size(); i++){
         cout<<names[i]<<" ("<<i<<")"<<"\n";
     }
+    cout << endl;
     for(int i = 0; i<n; i++){
+        cout << "> ";
         cin>>x;
         if(x<10 & x>=0) finalCities.push_back(x);
         else {cout<<"Numero de ciudad invalido\n"; return 0;}
     }
-
+    cout << endl;
     cout<<"Ingrese metodo de resolucion:\n";
-    cout<<"Sequential BAB (0)\n";
-    cout<<"Parallel BAB (1)\n";
-    cout<<"Sequential BAB with additional cost (2)\n";
-    cout<<"Parallel BAB with additional cost (3)\n";
-
+    cout<<"0. Sequential BAB\n";
+    cout<<"1. Parallel BAB\n";
+    cout<<"2. Sequential BAB with additional cost\n";
+    cout<<"3. Parallel BAB with additional cost\n";
+    cout << "> ";
     cin>>n;
 
     if(n>3 || n<0){cout<<"Numero invalido\n"; return 0;}
