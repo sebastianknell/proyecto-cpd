@@ -31,7 +31,7 @@ void printPath(PathExtra* path, vector<string> &names) {
     }
     cout << names[path->nodes[path->nodes.size()-1]] << " -> " << names[0] << endl;
     cout << "Distancia total: " << path->cost << endl;
-    cout << "Combustible total: " << path->oil << endl;
+    cout << "Aceite total: " << path->oil << endl;
     cout << line << endl;
 }
 
