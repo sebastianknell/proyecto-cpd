@@ -32,10 +32,12 @@ int main() {
 //    auto path2 = ParallelBAB(cities, 0);
 //    t2 = omp_get_wtime();
 //    if (path2) printPath(path2);
+//    if (path2) printPath(path2, names);
 //    cout << "Total time: " << t2-t1 << endl;
-    auto testGraph = Tester::generateGraph(30);
-    Tester::testSequential(testGraph, 10);
-    Tester::testParallel(testGraph, 10, 10);
+//    auto testGraph = Tester::generateGraph(30);
+//    Tester::testSequential(testGraph, 10);
+//    Tester::testParallel(testGraph, 10, 10);
+    Tester::testWeakScaling(16, 5);
 
     return 0;
 }

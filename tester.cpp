@@ -52,4 +52,33 @@ public:
             cout << "# de threads = " << threads[i] << " | " << "tiempo = " << times[i] << endl;
         }
     }
+
+    static void testWeakScaling(int maxThreads, int iterations) {
+        vector<int> threads = {2, 4, 6, 8, 10, 12, 14, 16};
+        vector<double> times;
+        int n = 10;
+        auto testGraph = generateGraph(n);
+        testSequential(testGraph, iterations);
+        n += 2;
+        for (auto t : threads) {
+            if (t > maxThreads) break;
+            double avg = 0;
+            testGraph = generateGraph(n);
+            omp_set_num_threads(t);
+            cout << "Prueba con " << t << " threads" << endl;
+            for (int i = 0; i < iterations; i++) {
+                auto t1 = omp_get_wtime();
+                ParallelBAB(*testGraph, 0);
+                auto t2 = omp_get_wtime();
+                avg += t2-t1;
+            }
+            avg /= iterations;
+            times.push_back(avg);
+            n += 2;
+        }
+        cout << "Resultados para n = "<< testGraph->size() << endl;
+        for (int i = 0; i < times.size(); i++) {
+            cout << "# de threads = " << threads[i] << " | " << "tiempo = " << times[i] << endl;
+        }
+    }
 };
